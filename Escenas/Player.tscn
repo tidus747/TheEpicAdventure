@@ -28,14 +28,15 @@ animations = [ {
 "name": "caminar",
 "speed": 6.0
 } ]
+_sections_unfolded = [ "Resource" ]
 
 [sub_resource type="CapsuleShape2D" id=2]
 
 custom_solver_bias = 0.0
-radius = 6.6282
-height = 17.5946
+radius = 3.97773
+height = 11.1868
 
-[node name="Player" type="Area2D"]
+[node name="Player" type="Area2D" index="0"]
 
 position = Vector2( 86.5824, 85.2436 )
 scale = Vector2( 2, 2 )
@@ -54,13 +55,12 @@ velocidad = 80
 
 frames = SubResource( 1 )
 animation = "caminar"
-frame = 2
+frame = 3
 playing = true
 
 [node name="collision_player" type="CollisionShape2D" parent="." index="1"]
 
-visible = false
-position = Vector2( 3.75797, 4.07816 )
+position = Vector2( 0.727474, 5.65928 )
 scale = Vector2( 1.32229, 1 )
 shape = SubResource( 2 )
 
