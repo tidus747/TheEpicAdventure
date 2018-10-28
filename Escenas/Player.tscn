@@ -1,0 +1,69 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Escenas/Player.gd" type="Script" id=1]
+[ext_resource path="res://Individual/wizzard_m_idle_anim_f0.png" type="Texture" id=2]
+[ext_resource path="res://Individual/wizzard_m_idle_anim_f1.png" type="Texture" id=3]
+[ext_resource path="res://Individual/wizzard_m_idle_anim_f2.png" type="Texture" id=4]
+[ext_resource path="res://Individual/wizzard_m_idle_anim_f3.png" type="Texture" id=5]
+[ext_resource path="res://Individual/wizzart_m_run_anim_f0.png" type="Texture" id=6]
+[ext_resource path="res://Individual/wizzart_m_run_anim_f1.png" type="Texture" id=7]
+[ext_resource path="res://Individual/wizzart_m_run_anim_f2.png" type="Texture" id=8]
+[ext_resource path="res://Individual/wizzart_m_run_anim_f3.png" type="Texture" id=9]
+
+[sub_resource type="SpriteFrames" id=1]
+
+animations = [ {
+"frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ) ],
+"loop": true,
+"name": "correr",
+"speed": 10.0
+}, {
+"frames": [ ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ) ],
+"loop": true,
+"name": "caminar",
+"speed": 6.0
+} ]
+
+[sub_resource type="CapsuleShape2D" id=2]
+
+custom_solver_bias = 0.0
+radius = 6.6282
+height = 17.5946
+
+[node name="Player" type="Area2D"]
+
+position = Vector2( 86.5824, 85.2436 )
+scale = Vector2( 2, 2 )
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
+script = ExtResource( 1 )
+_sections_unfolded = [ "Transform" ]
+velocidad = 80
+
+[node name="Sprites_player" type="AnimatedSprite" parent="." index="0"]
+
+frames = SubResource( 1 )
+animation = "caminar"
+frame = 2
+playing = true
+
+[node name="collision_player" type="CollisionShape2D" parent="." index="1"]
+
+visible = false
+position = Vector2( 3.75797, 4.07816 )
+scale = Vector2( 1.32229, 1 )
+shape = SubResource( 2 )
+
+[connection signal="body_entered" from="." to="." method="_on_Player_body_entered"]
+
+
