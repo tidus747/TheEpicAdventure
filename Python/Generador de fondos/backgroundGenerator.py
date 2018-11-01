@@ -22,13 +22,14 @@ from matplotlib import pyplot as plt
 import os
 import pandas as pd
 import cv2
+import random
 
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 RESOURCES_PATH = "../../Individual/"
 
 LISTA_DE_RECURSOS = ['Columnas','Puertas','Bordes','Esquinas','Suelos','Banderas','Misc']
 
-BACKGROUND_H = 600
+BACKGROUND_H = 608
 BACKGROUND_W = 1024
 
 def check_column_elements(data):
@@ -57,7 +58,7 @@ def load_resources(data):
     estamos buscando para poder guardarla.
     """
     list_elements = check_column_elements(data)
-    tiles = np.zeros((16,16,3,len(list_elements)))
+    tiles = np.zeros((16,16,3,len(list_elements))).astype('uint8')
 
     for i in range(len(list_elements)):
         tiles[:,:,:,i] = cv2.imread(RESOURCES_PATH+list_elements[i])
@@ -71,6 +72,16 @@ def fill_floor(floor_tiles,background):
     floor_tiles -- imágenes a colocar en el suelo.
     background -- imagen de fondo sobre la que se va a trabajar.
     """
+    for x in range(0,BACKGROUND_W,16):
+        for y in range(0,BACKGROUND_H,16):
+            background[y:y+16,x:x+16,:] = floor_tiles[:,:,:,0]
+
+            # Generamos un número aleatorio para poder añadir el suelo personalizado
+            suelo = random.randint(1,100)
+            if ( suelo < 8 ):
+                background[y:y+16,x:x+16,:] = floor_tiles[:,:,:,suelo]
+
+    return background
 
 
 
@@ -87,3 +98,5 @@ tiles_Misc = load_resources(data[LISTA_DE_RECURSOS[6]])
 
 # Generamos el mapa vacío
 background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
+
+background = fill_floor(tiles_Suelos,background)
