@@ -31,6 +31,7 @@ LISTA_DE_RECURSOS = ['Columnas','Puertas','Bordes','Esquinas','Suelos','Banderas
 
 BACKGROUND_H = 608
 BACKGROUND_W = 1024
+TILE_SIZE = 16
 
 def check_column_elements(data):
     """Funcion para comprobar los recursos disponibles en la columna.
@@ -72,17 +73,42 @@ def fill_floor(floor_tiles,background):
     floor_tiles -- imágenes a colocar en el suelo.
     background -- imagen de fondo sobre la que se va a trabajar.
     """
-    for x in range(0,BACKGROUND_W,16):
-        for y in range(0,BACKGROUND_H,16):
-            background[y:y+16,x:x+16,:] = floor_tiles[:,:,:,0]
+    for x in range(0,BACKGROUND_W,TILE_SIZE):
+        for y in range(0,BACKGROUND_H,TILE_SIZE):
+            background[y:y+TILE_SIZE,x:x+TILE_SIZE,:] = floor_tiles[:,:,:,0]
 
             # Generamos un número aleatorio para poder añadir el suelo personalizado
             suelo = random.randint(1,100)
             if ( suelo < 8 ):
-                background[y:y+16,x:x+16,:] = floor_tiles[:,:,:,suelo]
+                background[y:y+TILE_SIZE,x:x+TILE_SIZE,:] = floor_tiles[:,:,:,suelo]
 
     return background
 
+def fill_walls(wall_tiles,background):
+    """Funcion para rellenar automáticamente los muros de los bordes.
+
+    Keyword arguments:
+    wall_tiles -- imágenes a colocar en los muros.
+    background -- imagen de fondo sobre la que se va a trabajar.
+    """
+    for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
+        background[0:0+TILE_SIZE,x:x+TILE_SIZE,:] = wall_tiles[:,:,:,4]
+
+    for y in range(0,BACKGROUND_H,TILE_SIZE):
+        background[y:y+TILE_SIZE,0:0+TILE_SIZE,:] = wall_tiles[:,:,:,6]
+
+    return background
+
+def fill_borders(borders_tiles,background):
+    """Funcion para rellenar automáticamente los bordes de la pantalla.
+
+    Keyword arguments:
+    border_tiles -- imágenes a colocar en los bordes.
+    background -- imagen de fondo sobre la que se va a trabajar.
+    """
+
+
+    return background
 
 
 #os.chdir(RESOURCES_PATH)
@@ -99,4 +125,8 @@ tiles_Misc = load_resources(data[LISTA_DE_RECURSOS[6]])
 # Generamos el mapa vacío
 background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
 
+# Generamos el suelo
 background = fill_floor(tiles_Suelos,background)
+
+# Generamos los muros
+background = fill_walls(tiles_Esquinas,background)
