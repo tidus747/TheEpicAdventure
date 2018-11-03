@@ -120,6 +120,39 @@ def fill_borders(borders_tiles,background):
 
     return background
 
+def copy_image_alpha(image,dst):
+    """Funcion para rellenar una imagen con otra con canal alpha.
+
+    Keyword arguments:
+    image -- imagen con canal alpha.
+    background -- imagen de fondo sobre la que se va a trabajar.
+    """
+
+    for y in range(image.shape[0]):
+        for x in range(image.shape[1]):
+            if (image[y,x,0] != 0 and image[y,x,1] != 0 and image[y,x,2] != 0):
+                dst[y,x,:] = image[y,x,:]
+
+    return dst
+
+
+def put_misc(misc_tiles,background):
+    """Funcion para rellenar automáticamente el escenario con miscelánea.
+
+    Keyword arguments:
+    misc_tiles -- imágenes a colocar en el escenario.
+    background -- imagen de fondo sobre la que se va a trabajar.
+    """
+    repeticion = random.randint(1,10)
+    for i in range(misc_tiles.shape[3]):
+        for j in range(repeticion):
+            pos_x = random.randint(TILE_SIZE,BACKGROUND_W-TILE_SIZE)
+            pos_y = random.randint(TILE_SIZE,BACKGROUND_H-TILE_SIZE)
+
+            copy_image_alpha(misc_tiles[:,:,:,i],background[pos_y:pos_y+TILE_SIZE,pos_x:pos_x+TILE_SIZE,:])
+        repeticion = random.randint(1,10)
+
+    return background
 
 #os.chdir(RESOURCES_PATH)
 data = pd.read_csv("resources.csv")
@@ -140,3 +173,7 @@ background = fill_floor(tiles_Suelos,background)
 
 # Generamos los muros
 background = fill_walls(background,wall_tiles_up=tiles_Esquinas[:,:,:,4],wall_tiles_right=tiles_Esquinas[:,:,:,6],wall_tiles_left=tiles_Esquinas[:,:,:,3])
+
+# Colocamos la miscelánea
+
+background = put_misc(tiles_Misc,background)
