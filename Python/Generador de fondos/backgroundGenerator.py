@@ -84,18 +84,29 @@ def fill_floor(floor_tiles,background):
 
     return background
 
-def fill_walls(wall_tiles,background):
+def fill_walls(bg,wall_tiles_up=None,wall_tiles_bot =None, wall_tiles_left =None, wall_tiles_right=None):
     """Funcion para rellenar automáticamente los muros de los bordes.
 
     Keyword arguments:
     wall_tiles -- imágenes a colocar en los muros.
     background -- imagen de fondo sobre la que se va a trabajar.
     """
-    for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
-        background[0:0+TILE_SIZE,x:x+TILE_SIZE,:] = wall_tiles[:,:,:,4]
+    # Muros de la parte superior
+    if (type(wall_tiles_up) == np.ndarray):
+        for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
+            bg[0:0+TILE_SIZE,x:x+TILE_SIZE,:] = wall_tiles_up
 
-    for y in range(0,BACKGROUND_H,TILE_SIZE):
-        background[y:y+TILE_SIZE,0:0+TILE_SIZE,:] = wall_tiles[:,:,:,6]
+    if (type(wall_tiles_bot) == np.ndarray):
+        for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
+            bg[BACKGROUND_H-TILE_SIZE:BACKGROUND_H,x:x+TILE_SIZE,:] = wall_tiles_bot
+
+    if (type(wall_tiles_left) == np.ndarray):
+        for y in range(0,BACKGROUND_H,TILE_SIZE):
+            bg[y:y+TILE_SIZE,0:0+TILE_SIZE,:] = wall_tiles_left
+
+    if (type(wall_tiles_right) == np.ndarray):
+        for y in range(0,BACKGROUND_H,TILE_SIZE):
+            bg[y:y+TILE_SIZE,BACKGROUND_W-TILE_SIZE:BACKGROUND_W,:] = wall_tiles_right
 
     return background
 
@@ -106,7 +117,6 @@ def fill_borders(borders_tiles,background):
     border_tiles -- imágenes a colocar en los bordes.
     background -- imagen de fondo sobre la que se va a trabajar.
     """
-
 
     return background
 
@@ -129,4 +139,4 @@ background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
 background = fill_floor(tiles_Suelos,background)
 
 # Generamos los muros
-background = fill_walls(tiles_Esquinas,background)
+background = fill_walls(background,wall_tiles_up=tiles_Esquinas[:,:,:,4],wall_tiles_right=tiles_Esquinas[:,:,:,6],wall_tiles_left=tiles_Esquinas[:,:,:,3])
