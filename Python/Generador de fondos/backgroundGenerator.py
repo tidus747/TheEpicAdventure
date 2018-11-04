@@ -33,6 +33,7 @@ LISTA_DE_RECURSOS = ['Columnas','Puertas','Bordes','Esquinas','Suelos','Banderas
 BACKGROUND_H = 608
 BACKGROUND_W = 1024
 TILE_SIZE = 16
+WALL_MARGIN = 16
 
 def check_column_elements(data):
     """Funcion para comprobar los recursos disponibles en la columna.
@@ -52,15 +53,17 @@ def check_column_elements(data):
     return list_elements
 
 
-def load_resources(data):
+def load_resources(data, size_x = 16, size_y = 16):
     """Funcion para buscar los recursos por medio de una palabra clave.
 
     Keyword arguments:
     data_column -- datos leídos por Pandas, hay que introducir la columna que
     estamos buscando para poder guardarla.
+    size_x -- ancho del tile.
+    size_y -- alto del tile.
     """
     list_elements = check_column_elements(data)
-    tiles = np.zeros((16,16,3,len(list_elements))).astype('uint8')
+    tiles = np.zeros((size_y,size_x,3,len(list_elements))).astype('uint8')
 
     for i in range(len(list_elements)):
         tiles[:,:,:,i] = cv2.imread(RESOURCES_PATH+list_elements[i])
@@ -95,29 +98,19 @@ def fill_walls(bg,wall_tiles_up=None,wall_tiles_bot =None, wall_tiles_left =None
     # Muros de la parte superior
     if (type(wall_tiles_up) == np.ndarray):
         for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
-            bg[0:0+TILE_SIZE,x:x+TILE_SIZE,:] = wall_tiles_up
+            bg[WALL_MARGIN:WALL_MARGIN+TILE_SIZE,x:x+TILE_SIZE,:] = wall_tiles_up
 
     if (type(wall_tiles_bot) == np.ndarray):
         for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
-            bg[BACKGROUND_H-TILE_SIZE:BACKGROUND_H,x:x+TILE_SIZE,:] = wall_tiles_bot
+            bg[BACKGROUND_H-TILE_SIZE-WALL_MARGIN:BACKGROUND_H-WALL_MARGIN,x:x+TILE_SIZE,:] = wall_tiles_bot
 
     if (type(wall_tiles_left) == np.ndarray):
-        for y in range(0,BACKGROUND_H,TILE_SIZE):
+        for y in range(WALL_MARGIN,BACKGROUND_H,TILE_SIZE):
             bg[y:y+TILE_SIZE,0:0+TILE_SIZE,:] = wall_tiles_left
 
     if (type(wall_tiles_right) == np.ndarray):
-        for y in range(0,BACKGROUND_H,TILE_SIZE):
+        for y in range(WALL_MARGIN,BACKGROUND_H,TILE_SIZE):
             bg[y:y+TILE_SIZE,BACKGROUND_W-TILE_SIZE:BACKGROUND_W,:] = wall_tiles_right
-
-    return background
-
-def fill_borders(borders_tiles,background):
-    """Funcion para rellenar automáticamente los bordes de la pantalla.
-
-    Keyword arguments:
-    border_tiles -- imágenes a colocar en los bordes.
-    background -- imagen de fondo sobre la que se va a trabajar.
-    """
 
     return background
 
@@ -136,7 +129,7 @@ def copy_image_alpha(image,dst):
 
     return dst
 
-def put_misc(misc_tiles,background):
+def put_misc(misc_tiles,background): # TODO Hay que añadir el wall margin
     """Funcion para rellenar automáticamente el escenario con miscelánea.
 
     Keyword arguments:
@@ -172,12 +165,24 @@ def fill_edges(edges_tiles, background):
 
     return background
 
+def put_door(door_tiles,pos_x,pos_y,background):
+    """Funcion para colocar puertas en la escena.
+
+    Keyword arguments:
+    door_tiles -- imágenes de la puerta a colocar.
+    background -- imagen de fondo sobre la que se va a trabajar.
+    """
+    copy_image_alpha(door_tiles[:,:,:,0],background[WALL_MARGIN-TILE_SIZE:(WALL_MARGIN-TILE_SIZE)+door_tiles[:,:,:,0].shape[0],BACKGROUND_W/2:BACKGROUND_W/2+door_tiles[:,:,:,0].shape[1],:])
+
+    return background
+
 
 #os.chdir(RESOURCES_PATH)
 data = pd.read_csv("resources.csv")
 
 # Cargamos todos los recursos disponibles
 tiles_Columnas = load_resources(data[LISTA_DE_RECURSOS[0]])
+tiles_Puerta = load_resources(data[LISTA_DE_RECURSOS[1]],size_x=32,size_y=32)
 tiles_Bordes = load_resources(data[LISTA_DE_RECURSOS[2]])
 tiles_Esquinas = load_resources(data[LISTA_DE_RECURSOS[3]])
 tiles_Suelos = load_resources(data[LISTA_DE_RECURSOS[4]])
@@ -198,3 +203,8 @@ background = put_misc(tiles_Misc,background)
 
 # Colocamos los bordes de la pantalla
 #background = fill_edges(tiles_Bordes, background)
+
+# Colocamos la puerta
+background = put_door(tiles_Puerta,background)
+
+# Colocamos las columnas de los muros
