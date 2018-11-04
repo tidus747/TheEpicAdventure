@@ -23,6 +23,7 @@ import os
 import pandas as pd
 import cv2
 import random
+from scipy.ndimage import rotate
 
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 RESOURCES_PATH = "../../Individual/"
@@ -135,7 +136,6 @@ def copy_image_alpha(image,dst):
 
     return dst
 
-
 def put_misc(misc_tiles,background):
     """Funcion para rellenar automáticamente el escenario con miscelánea.
 
@@ -153,6 +153,25 @@ def put_misc(misc_tiles,background):
         repeticion = random.randint(1,10)
 
     return background
+
+def fill_edges(edges_tiles, background):
+    """Funcion para rellenar automáticamente los bordes de la pantalla.
+
+    Keyword arguments:
+    edges_tiles -- imágenes a colocar en los bordes de la pantalla.
+    background -- imagen de fondo sobre la que se va a trabajar.
+    """
+
+    for x in range(0,BACKGROUND_W,TILE_SIZE):
+        copy_image_alpha(edges_tiles[:,:,:,0],background[0:TILE_SIZE,x:x+TILE_SIZE,:])
+        copy_image_alpha(rotate(edges_tiles[:,:,:,0],180,reshape=False),background[BACKGROUND_H-TILE_SIZE:BACKGROUND_H,x:x+TILE_SIZE,:])
+
+    for y in range(0,BACKGROUND_H,TILE_SIZE):
+        copy_image_alpha(rotate(edges_tiles[:,:,:,0],90,reshape=False),background[y:y+TILE_SIZE,0:TILE_SIZE,:])
+        copy_image_alpha(rotate(edges_tiles[:,:,:,0],-90,reshape=False),background[y:y+TILE_SIZE,BACKGROUND_W-TILE_SIZE:BACKGROUND_W,:])
+
+    return background
+
 
 #os.chdir(RESOURCES_PATH)
 data = pd.read_csv("resources.csv")
@@ -175,5 +194,7 @@ background = fill_floor(tiles_Suelos,background)
 background = fill_walls(background,wall_tiles_up=tiles_Esquinas[:,:,:,4],wall_tiles_right=tiles_Esquinas[:,:,:,6],wall_tiles_left=tiles_Esquinas[:,:,:,3])
 
 # Colocamos la miscelánea
-
 background = put_misc(tiles_Misc,background)
+
+# Colocamos los bordes de la pantalla
+#background = fill_edges(tiles_Bordes, background)
