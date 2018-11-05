@@ -1,5 +1,5 @@
 Columnas,Puertas,Bordes,Esquinas,Suelos,Banderas,Misc
-wall_column_base.png,doors_all.png,edge.png,wall_corner_bottom_right.png,floor_1.png,wall_banner_blue.png,skull.png
+wall_column_base.png,doors_leaf_closed.png,edge.png,wall_corner_bottom_right.png,floor_1.png,wall_banner_blue.png,skull.png
 wall_column_mid.png,,,wall_corner_front_left.png,floor_2.png,wall_banner_green.png,
 wall_column_top.png,,,wall_corner_right.png,floor_3.png,wall_banner_red.png,
 ,,,wall_left.png,floor_4.png,wall_banner_yellow.png,
