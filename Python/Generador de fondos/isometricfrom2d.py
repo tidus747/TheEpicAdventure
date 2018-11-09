@@ -118,4 +118,20 @@ def drawTransformations(tile_2d):
 
     plt.show()
 
-    return 0
+    return
+
+def generate_iso(tile_2d_simple):
+    """Funcion para generar la proyección simple de un tile 2d en isométrico.
+
+    Keyword arguments:
+    tile_2d -- que se pretende convertir a isométrico.
+    """
+    new_tile = np.zeros([tile_2d_simple.shape[0],tile_2d_simple.shape[1]*2,tile_2d_simple.shape[2]]).astype("uint8")
+
+    for x in range(16):
+        for y in range(16):
+            iso_x = 16+x-y
+            iso_y = (x+y)/2
+            new_tile[iso_y,iso_x,:] = tile_2d_simple[y,x,:]
+
+    return new_tile
