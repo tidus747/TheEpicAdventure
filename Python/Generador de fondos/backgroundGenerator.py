@@ -176,19 +176,22 @@ def put_door(door_tiles,pos_x,pos_y,background):
 
     return background
 
-def iso(x,y):
-    return np.array([0.25*(x-y),0.5*(TILE_SIZE-x-y)])
-
 def conv_2dtoiso(tile_2d):
     """Funcion para generar un tile en isométrico a partir de un tile 2d del suelo.
 
     Keyword arguments:
     tile_2d -- que se pretende convertir a isométrico.
     """
-    for x in range(TILE_SIZE):
-        for y in range(TILE_SIZE/2):
-            
+    tile_iso = np.zeros([64,64,3]).astype('uint8')
 
+    for i in range(TILE_SIZE):
+        for j in range(TILE_SIZE):
+            x = j*TILE_SIZE
+            y = i*TILE_SIZE
+            isoX = x-y
+            isoY = x+y/2
+            print("%d,%d",isoX,isoY)
+            tile_iso[isoY,isoX,:] = tile_2d[i,j,:]
     return tile_iso
 
 
