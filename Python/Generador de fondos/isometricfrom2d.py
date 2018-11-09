@@ -18,14 +18,18 @@ Ivan Rodriguez (c) 2018
 '''
 
 import math
+import numpy as np
+import cv2
+from matplotlib import pyplot as plt
 
 # Definiciones
 cos_30 = math.cos(math.radians(30))
 sin_30 = math.sin(math.radians(30))
 tan_30 = math.tan(math.radians(30))
 
-class
+perspectives = ["to_top","to_left","to_right","from_top","from_left","from_right"]
 
+# Definimos las transformaciones posibles
 transformations = {
         # From 2D to isometric top down view:
         #   * scale vertically by cos(30°)
@@ -64,4 +68,54 @@ transformations = {
         #   * scale horizontally by 1 / cos(30°)
         'from_right':   [[1 / cos_30,   0,          0],
                          [tan_30,       1,          0]]
-    }
+}
+
+def increaseBorders(tile):
+    """Funcion para aumentar la imagen manteniendo el tile en el centro.
+
+    Keyword arguments:
+    tile -- que se pretende copiar en una imagen de mayor tamaño.
+    """
+    y,x,ch = tile.shape
+    new_tile = np.zeros([y*5,x*5,ch]).astype("uint8")
+
+    new_tile[y*2:tile.shape[0]+y*2,x*2:tile.shape[1]+x*2,:] = tile[:,:,:]
+
+    return new_tile
+
+def isofrom2d(tile_2d,trans_string):
+    """Funcion para generar un tile en isométrico a partir de un tile 2d.
+
+    Keyword arguments:
+    tile_2d -- que se pretende convertir a isométrico.
+    """
+    rows,cols,ch = tile_2d.shape
+
+    return cv2.warpAffine(tile_2d,np.array(transformations[trans_string]),(cols,rows))
+
+def drawTransformations(tile_2d):
+    """Funcion para generar las posibles proyecciones de un tile 2d en isométrico.
+
+    Keyword arguments:
+    tile_2d -- que se pretende convertir a isométrico.
+    """
+    total = len(perspectives) # Número de subplots que queremos añadir
+    columnas = 3 # Número de columnas de la figura
+
+    filas = total // columnas
+    filas += total % columnas
+
+    position = range(1, total + 1) # Índice para el control de posición de los subplots
+
+    fig = plt.figure(1)
+
+    for x in range(total):
+        tile_2d_grande = increaseBorders(tile_2d)
+        imagen = isofrom2d(tile_2d_grande,perspectives[x])
+        ax = fig.add_subplot(filas,columnas,position[x])
+        ax.imshow(imagen[:,:,[2,1,0]])
+        ax.set_title(perspectives[x])
+
+    plt.show()
+
+    return 0

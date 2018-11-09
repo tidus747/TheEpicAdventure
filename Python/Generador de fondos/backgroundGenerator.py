@@ -176,25 +176,6 @@ def put_door(door_tiles,pos_x,pos_y,background):
 
     return background
 
-def conv_2dtoiso(tile_2d):
-    """Funcion para generar un tile en isométrico a partir de un tile 2d del suelo.
-
-    Keyword arguments:
-    tile_2d -- que se pretende convertir a isométrico.
-    """
-    tile_iso = np.zeros([64,64,3]).astype('uint8')
-
-    for i in range(TILE_SIZE):
-        for j in range(TILE_SIZE):
-            x = j*TILE_SIZE
-            y = i*TILE_SIZE
-            isoX = x-y
-            isoY = x+y/2
-            print("%d,%d",isoX,isoY)
-            tile_iso[isoY,isoX,:] = tile_2d[i,j,:]
-    return tile_iso
-
-
 #os.chdir(RESOURCES_PATH)
 data = pd.read_csv("resources.csv")
 
@@ -218,8 +199,6 @@ background = fill_floor(tiles_Suelos,background)
 
 # Colocamos la miscelánea
 background = put_misc(tiles_Misc,background)
-
-suelo = conv_2dtoiso(tiles_Suelos[:,:,:,0])
 
 # Colocamos los bordes de la pantalla
 #background = fill_edges(tiles_Bordes, background)
