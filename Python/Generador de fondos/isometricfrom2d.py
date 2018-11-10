@@ -124,7 +124,7 @@ def generate_iso(tile_2d_simple):
     """Funcion para generar la proyección simple de un tile 2d en isométrico.
 
     Keyword arguments:
-    tile_2d -- que se pretende convertir a isométrico.
+    tile_2d -- tile que se pretende convertir a isométrico.
     """
     new_tile = np.zeros([tile_2d_simple.shape[0],tile_2d_simple.shape[1]*2,tile_2d_simple.shape[2]]).astype("uint8")
 
@@ -135,3 +135,43 @@ def generate_iso(tile_2d_simple):
             new_tile[iso_y,iso_x,:] = tile_2d_simple[y,x,:]
 
     return new_tile
+
+def crop_tile(tile_for_crop,orientation,tile_size=16):
+    """Funcion para generar el recorte del tile.
+
+    Keyword arguments:
+    tile_for_crop -- tile que se pretende recortar.
+    """
+    # Buscamos el límite superior
+    for y in range(tile_for_crop.shape[0]):
+        if(tile_for_crop[y,:,0].any() != 0 or tile_for_crop[y,:,1].any() != 0 or tile_for_crop[y,:,2].any() != 0):
+            top_limit = y
+            break
+    # Buscamos el límite inferior
+    for y in range(tile_for_crop.shape[0]-1,-1,-1):
+        if(tile_for_crop[y,:,0].any() != 0 or tile_for_crop[y,:,1].any() != 0 or tile_for_crop[y,:,2].any() != 0):
+            bot_limit = y
+            break
+    # Buscamos el límite izquierdo
+    for x in range(tile_for_crop.shape[1]):
+        if(tile_for_crop[:,x,0].any() > 0.8 or tile_for_crop[:,x,1].any() > 0.8 or tile_for_crop[:,x,2].any() > 0.8):
+            left_limit = x+1
+            break
+    for x in range(tile_for_crop.shape[1]-1,-1,-1):
+        if(tile_for_crop[:,x,0].any() != 0 or tile_for_crop[:,x,1].any() != 0 or tile_for_crop[:,x,2].any() != 0):
+            right_limit = x
+            break
+
+    size_y = bot_limit - top_limit
+    size_x = right_limit - left_limit
+
+    #tile_crop = np.zeros([int(math.ceil(size_y/10))*tile_size,int(math.ceil(size_x/10))*tile_size,3]).astype("uint8")
+    tile_crop = np.zeros([size_y,size_x,3]).astype("uint8")
+
+    if (orientation == "left"):
+        tile_crop[tile_crop.shape[0]-size_y:tile_crop.shape[0],0:size_x,:] = tile_for_crop[top_limit:bot_limit,left_limit:right_limit,:]
+    else:
+        tile_crop[tile_crop.shape[0]-size_y:tile_crop.shape[0],tile_crop.shape[1]-size_x:tile_crop.shape[1],:] = tile_for_crop[top_limit:bot_limit,left_limit:right_limit,:]
+
+
+    return tile_crop

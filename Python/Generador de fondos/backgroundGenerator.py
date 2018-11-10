@@ -24,6 +24,7 @@ import pandas as pd
 import cv2
 import random
 from scipy.ndimage import rotate
+import isometricfrom2d as iso
 
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 RESOURCES_PATH = "../../Individual/"
@@ -189,16 +190,16 @@ tiles_Banderas = load_resources(data[LISTA_DE_RECURSOS[5]])
 tiles_Misc = load_resources(data[LISTA_DE_RECURSOS[6]])
 
 # Generamos el mapa vacío
-background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
+#background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
 
 # Generamos el suelo
-background = fill_floor(tiles_Suelos,background)
+#background = fill_floor(tiles_Suelos,background)
 
 # Generamos los muros
 #background = fill_walls(background,wall_tiles_up=tiles_Esquinas[:,:,:,4],wall_tiles_right=tiles_Esquinas[:,:,:,6],wall_tiles_left=tiles_Esquinas[:,:,:,3])
 
 # Colocamos la miscelánea
-background = put_misc(tiles_Misc,background)
+#background = put_misc(tiles_Misc,background)
 
 # Colocamos los bordes de la pantalla
 #background = fill_edges(tiles_Bordes, background)
@@ -206,4 +207,18 @@ background = put_misc(tiles_Misc,background)
 # Colocamos la puerta
 #background = put_door(tiles_Puerta,background)
 
-# Colocamos las columnas de los muros
+# Generación de tiles isometricos
+suelo = iso.isofrom2d(iso.increaseBorders(tiles_Esquinas[:,:,:,4]),iso.perspectives[1])
+
+crop_tile = iso.crop_tile(suelo,"left")
+
+plt.figure(1)
+plt.imshow(crop_tile[:,:,[2,1,0]])
+
+suelo = iso.isofrom2d(iso.increaseBorders(tiles_Esquinas[:,:,:,4]),iso.perspectives[2])
+crop_tile = iso.crop_tile(suelo,"right")
+
+plt.figure(2)
+plt.imshow(crop_tile[:,:,[2,1,0]])
+
+plt.show()
