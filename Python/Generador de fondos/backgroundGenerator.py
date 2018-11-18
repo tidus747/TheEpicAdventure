@@ -221,4 +221,10 @@ crop_tile = iso.crop_tile(suelo,"right")
 plt.figure(2)
 plt.imshow(crop_tile[:,:,[2,1,0]])
 
+suelo = iso.generate_iso(tiles_Esquinas[:,:,:,4])
+crop_tile = iso.crop_tile(suelo,"iso")
+
+plt.figure(3)
+plt.imshow(crop_tile[:,:,[2,1,0]])
+
 plt.show()

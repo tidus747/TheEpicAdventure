@@ -171,7 +171,9 @@ def crop_tile(tile_for_crop,orientation,tile_size=16):
     if (orientation == "left"):
         tile_crop[tile_crop.shape[0]-size_y:tile_crop.shape[0],0:size_x,:] = tile_for_crop[top_limit:bot_limit,left_limit:right_limit,:]
     else:
-        tile_crop[tile_crop.shape[0]-size_y:tile_crop.shape[0],tile_crop.shape[1]-size_x:tile_crop.shape[1],:] = tile_for_crop[top_limit:bot_limit,left_limit:right_limit,:]
-
+        if (orientation == "right"):
+            tile_crop[tile_crop.shape[0]-size_y:tile_crop.shape[0],tile_crop.shape[1]-size_x:tile_crop.shape[1],:] = tile_for_crop[top_limit:bot_limit,left_limit:right_limit,:]
+        else:
+            tile_crop = tile_for_crop
 
     return tile_crop
