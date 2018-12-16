@@ -36,7 +36,7 @@ custom_solver_bias = 0.0
 radius = 3.97773
 height = 11.1868
 
-[node name="Player" type="Area2D" index="0"]
+[node name="Player" type="Area2D"]
 
 position = Vector2( 86.5824, 85.2436 )
 scale = Vector2( 2, 2 )
@@ -55,7 +55,6 @@ velocidad = 80
 
 frames = SubResource( 1 )
 animation = "caminar"
-frame = 3
 playing = true
 
 [node name="collision_player" type="CollisionShape2D" parent="." index="1"]

@@ -4,11 +4,18 @@ signal iniciar_juego
 
 func _ready():
 	$Intro_song.play()	
+	$ScoreLabel.hide()
 
 func mostrar_mensaje(texto):
 	$Mensaje.text = texto
 	$Mensaje.show()
 	$MensajeTimer.start()
+	
+func ocultar_fondo():
+	$Fondo_interfaz.hide()
+	
+func mostrar_fondo():
+	$Fondo_interfaz.show()
 	
 func game_over():
 	$Game_song.stop()

@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Escenas/Interfaz.gd" type="Script" id=1]
-[ext_resource path="res://Fondos/Castillo.png" type="Texture" id=2]
+[ext_resource path="res://Fondos/Mago.png" type="Texture" id=2]
 [ext_resource path="res://Sound FX/GAMEOVER.wav" type="AudioStream" id=3]
 [ext_resource path="res://soundtrack/01 Invitation.ogg" type="AudioStream" id=4]
 [ext_resource path="res://soundtrack/04 Hopeful Feeling.ogg" type="AudioStream" id=5]
@@ -60,7 +60,7 @@ use_filter = false
 font_data = ExtResource( 6 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="Interfaz" type="CanvasLayer"]
+[node name="Interfaz" type="CanvasLayer" index="0"]
 
 layer = 1
 offset = Vector2( 0, 0 )
@@ -144,10 +144,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -290.0
-margin_top = -133.0
-margin_right = 291.0
-margin_bottom = -27.0
+margin_left = -473.0
+margin_top = 168.0
+margin_right = 82.0
+margin_bottom = 266.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
@@ -194,10 +194,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -103.0
-margin_top = -127.0
-margin_right = 102.0
-margin_bottom = -38.0
+margin_left = 223.0
+margin_top = -184.0
+margin_right = 428.0
+margin_bottom = -95.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2

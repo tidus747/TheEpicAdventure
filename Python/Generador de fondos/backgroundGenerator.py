@@ -25,6 +25,7 @@ import cv2
 import random
 from scipy.ndimage import rotate
 import isometricfrom2d as iso
+import scipy.misc
 
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 RESOURCES_PATH = "../../Individual/"
@@ -98,7 +99,7 @@ def fill_walls(bg,wall_tiles_up=None,wall_tiles_bot =None, wall_tiles_left =None
     """
     # Muros de la parte superior
     if (type(wall_tiles_up) == np.ndarray):
-        for x in range(TILE_SIZE,BACKGROUND_W-TILE_SIZE,TILE_SIZE):
+        for x in range(0,BACKGROUND_W,TILE_SIZE):
             bg[WALL_MARGIN:WALL_MARGIN+TILE_SIZE,x:x+TILE_SIZE,:] = wall_tiles_up
 
     if (type(wall_tiles_bot) == np.ndarray):
@@ -140,8 +141,8 @@ def put_misc(misc_tiles,background): # TODO Hay que añadir el wall margin
     repeticion = random.randint(1,10)
     for i in range(misc_tiles.shape[3]):
         for j in range(repeticion):
-            pos_x = random.randint(TILE_SIZE,BACKGROUND_W-TILE_SIZE)
-            pos_y = random.randint(TILE_SIZE,BACKGROUND_H-TILE_SIZE)
+            pos_x = random.randint(TILE_SIZE+WALL_MARGIN,BACKGROUND_W-TILE_SIZE)
+            pos_y = random.randint(TILE_SIZE+WALL_MARGIN,BACKGROUND_H-TILE_SIZE)
 
             copy_image_alpha(misc_tiles[:,:,:,i],background[pos_y:pos_y+TILE_SIZE,pos_x:pos_x+TILE_SIZE,:])
         repeticion = random.randint(1,10)
@@ -166,16 +167,30 @@ def fill_edges(edges_tiles, background):
 
     return background
 
-def put_door(door_tiles,pos_x,pos_y,background):
+def put_door(door_tiles,wall_front_tiles,background):
     """Funcion para colocar puertas en la escena.
 
     Keyword arguments:
     door_tiles -- imágenes de la puerta a colocar.
+    wall_front_tiles -- Tiles para rellenar el hueco que genera la puerta con un muro
     background -- imagen de fondo sobre la que se va a trabajar.
     """
+    for x in range(0,BACKGROUND_W,TILE_SIZE):
+        background[0:TILE_SIZE,x:x+TILE_SIZE,:] = wall_front_tiles
+
     copy_image_alpha(door_tiles[:,:,:,0],background[WALL_MARGIN-TILE_SIZE:(WALL_MARGIN-TILE_SIZE)+door_tiles[:,:,:,0].shape[0],BACKGROUND_W/2:BACKGROUND_W/2+door_tiles[:,:,:,0].shape[1],:])
 
     return background
+
+def save_image(image,nane):
+    """Funcion para guardar una imagen como png.
+
+    Keyword arguments:
+    image -- imagen que queremos guardar.
+    name -- nombre para la imagen que queremos guardar.
+    """
+    scipy.misc.imsave()
+
 
 #os.chdir(RESOURCES_PATH)
 data = pd.read_csv("resources.csv")
@@ -190,24 +205,26 @@ tiles_Banderas = load_resources(data[LISTA_DE_RECURSOS[5]])
 tiles_Misc = load_resources(data[LISTA_DE_RECURSOS[6]])
 
 # Generamos el mapa vacío
-#background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
+background = np.zeros((BACKGROUND_H,BACKGROUND_W,3)).astype('uint8')
 
 # Generamos el suelo
-#background = fill_floor(tiles_Suelos,background)
+background = fill_floor(tiles_Suelos,background)
 
 # Generamos los muros
-#background = fill_walls(background,wall_tiles_up=tiles_Esquinas[:,:,:,4],wall_tiles_right=tiles_Esquinas[:,:,:,6],wall_tiles_left=tiles_Esquinas[:,:,:,3])
+background = fill_walls(background,wall_tiles_up=tiles_Esquinas[:,:,:,4])
 
 # Colocamos la miscelánea
-#background = put_misc(tiles_Misc,background)
+background = put_misc(tiles_Misc,background)
 
 # Colocamos los bordes de la pantalla
 #background = fill_edges(tiles_Bordes, background)
 
 # Colocamos la puerta
-#background = put_door(tiles_Puerta,background)
+background = put_door(tiles_Puerta,tiles_Esquinas[:,:,:,4],background)
 
+scipy.misc.toimage(background[:,:,[2,1,0]]).save('../../Fondos/fondo1.png')
 # Generación de tiles isometricos
+'''
 suelo = iso.isofrom2d(iso.increaseBorders(tiles_Esquinas[:,:,:,4]),iso.perspectives[1])
 
 crop_tile = iso.crop_tile(suelo,"left")
@@ -228,3 +245,4 @@ plt.figure(3)
 plt.imshow(crop_tile[:,:,[2,1,0]])
 
 plt.show()
+'''
